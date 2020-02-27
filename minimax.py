@@ -21,7 +21,7 @@ def find_best_move(position, lookahead, player, push_move, find_moves, gameover,
 
         time_remaining = "  " + str(round((time.time() - start) * (len(moves) / (i + 1)) - (time.time() - start), 3)) + "s"
         print("I" + "#" * i + "-" * (len(moves) - i) + "I" + time_remaining, end="\r")
-
+    print("this is a test")
     print(scores, checked)
     if player:
         best_moves = [i for i in range(len(scores)) if scores[i] == max(scores)]
