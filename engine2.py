@@ -1,4 +1,4 @@
-import time, random, chess, minimax as MM
+import time, random, chess
 
 # turn true == white
 values = {"p":1, "n":3, "b":3, "r":5, "q":9, "P":-1, "N":-3, "B":-3, "R":-5, "Q":-9, "k":0, "K":0}
@@ -45,15 +45,46 @@ class ChessAi:
         if flipped:
             self.board.push(chess.Move.from_uci(str(columns[-X + 7] + str(-Y + 9) + str(columns[-x + 7] + str(-y + 9) + promotion))))
 
-    def make_move(self, player, flipped):
-        move = MM.find_best_move(self.board, self.depth, player, chess.Board.push, find_moves, chess.Board.is_game_over, evalboard, bias)
-        return move
+    def makemove(self, player, flipped):
+        start = time.time()
+        print("checking")
+        depth = self.depth
+        scores = []
+        score = 0
+        print(str([str(move) for move in self.board.legal_moves]))
+        print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
+        for i, move in enumerate(self.board.legal_moves):
+            time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s"
+            print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
+            score = 0
+            tempboard = self.board.copy()
+            tempboard.push(move)
+            sanmove = str(self.board.san(move))
+            if "#" in sanmove:
+                if player:
+                    score += 100
+                else:
+                    score -= 100
+            if "+" in sanmove:
+                if player:
+                    score += 0.5
+                else:
+                    score -= 0.5
+            score += minimax(tempboard, depth, -float("inf"), float("inf"), not player)
+            scores.append(score)
+        print(scores, sum(scores) / len(scores))
+        if player:
+            x = [i for i in range(len(scores)) if scores[i] == max(scores)]
+        else:
+            x = [i for i in range(len(scores)) if scores[i] == min(scores)]
+        return list(self.board.legal_moves)[random.choice(x)]
+
 
 def evalboard(source):## higher score for white
     pieces = source.piece_map()
     pieces = list(pieces.values())
     peicetotal = 0
-    if source.is_game_over():
+    if source.is_game_over() and source.turn:
         if source.turn:
             peicetotal -= 10
         else:
@@ -63,19 +94,28 @@ def evalboard(source):## higher score for white
             peicetotal -= values[str(piece)]
     return peicetotal
 
-def find_moves(position):
-    return list(position.legal_moves)
-
-def bias(position):
-    score = 0
-    if position.is_checkmate():
-        if not position.turn:
-            score += float("inf")
-        else:
-            score -= float("inf")
-    if position.is_check():
-        if not position.turn:
-            score += 0.5
-        else:
-            score -= 0.5
-    return score
+def minimax(board, depth, alpha, beta, maximizingPlayer):
+    if depth == 0 or board.is_game_over():
+       return evalboard(board)
+    if maximizingPlayer:
+        maxEval = -float("inf")
+        for move in board.legal_moves:
+            tempboard = board.copy()
+            tempboard.push(move)
+            Eval = minimax(tempboard, depth - 1, alpha, beta, False)
+            maxEval = max(maxEval, Eval)
+            alpha = max(alpha, Eval)
+            if beta <= alpha:
+                break
+        return maxEval
+    else:
+        minEval = float("inf")
+        for move in board.legal_moves:
+            tempboard = board.copy()
+            tempboard.push(move)
+            Eval = minimax(tempboard, depth - 1, alpha, beta, True)
+            minEval = min(minEval, Eval)
+            beta = min(beta, Eval)
+            if beta <= alpha:
+                break
+        return minEval

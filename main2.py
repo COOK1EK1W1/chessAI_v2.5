@@ -5,7 +5,7 @@ pygame.init()
 
 DISPLAYSURF = pygame.display.set_mode((640, 720), 0, 32)
 
-pygame.display.set_caption('George the chess ai')
+pygame.display.set_caption('Albert the chess ai')
 font = pygame.font.Font('FreeSerif.ttf', 76) 
 
 #colours
@@ -24,9 +24,7 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
 
     pygame.draw.rect(DISPLAYSURF, BLACK, (0, 640, 640, 7))
 
-    ########################### menu ###########################
-
-    font = pygame.font.Font('freesansbold.ttf', 24) 
+    font = pygame.font.Font('freesansbold.ttf', 24) #draw text for the buttons
     if autoplay:
         text = font.render("Auto", True, (0,255,0))
     else:
@@ -62,9 +60,8 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
     textRect = text.get_rect()
     textRect.center = (520, 680)
     DISPLAYSURF.blit(text, textRect)
-
-    ########################### menu ###########################
     
+
     font = pygame.font.Font('FreeSerif.ttf', 76) #draw the markers
     for i in markers:
         pygame.draw.circle(DISPLAYSURF, (0,255,0), (i[0] * 80 + 40, i[1] * 80 + 40), 20)
@@ -103,11 +100,11 @@ game_over = False
 autoplay = False
 flipped = False
 aiwhite = False
-debug_play = True
+debug_play = False
 
 def AIPlay():
     indicators = []
-    move = board.make_move(board.board.turn, flipped)
+    move = board.makemove(board.board.turn, flipped)
     board.board.push(move)
     if not flipped:
         indicators.append((int(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].index(str(move)[2])), -int(str(move)[3]) + 8))
