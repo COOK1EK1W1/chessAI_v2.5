@@ -1,72 +1,54 @@
-import pygame, sys, engine2 as E, chess
+import pygame, sys, engine2 as E, chess, ezgui
 from pygame.locals import *
 
-pygame.init()
 
-DISPLAYSURF = pygame.display.set_mode((640, 720), 0, 32)
+screen = ezgui.Screen(640, 720)
 
-pygame.display.set_caption('Albert the chess ai')
-font = pygame.font.Font('FreeSerif.ttf', 76) 
 
 #colours
 BLACK, BLACKBOARD = (0,0,0), (118,150,86)
 WHITE, WHTIEBOARD = (255,255,255), (238,238,210)
 SELECTED = (186,202,68)
 
+def draw_text(text, x, y, c):
+    screen.update_options(pygame.font.Font('freesansbold.ttf', 24))
+    screen.text(text, x, y, c)
+    
 def draw_checker_board(markers=[], indicators=[], dialog=""):
-    DISPLAYSURF.fill(WHTIEBOARD) #draw the board
+    screen.update_options(background_colour=WHTIEBOARD) #draw the board
     for i in range(64):
         x, y = i % 8, int(i / 8)
         if x % 2 == 0 and y % 2 == 1:
-            pygame.draw.rect(DISPLAYSURF, BLACKBOARD, (x * 80, y * 80, 80, 80))
+            screen.rect(x * 80, y * 80, 80, 80, BLACKBOARD)
         if x % 2 == 1 and y % 2 == 0:
-            pygame.draw.rect(DISPLAYSURF, BLACKBOARD, (x * 80, y * 80, 80, 80))
+            screen.rect(x * 80, y * 80, 80, 80, BLACKBOARD)
 
-    pygame.draw.rect(DISPLAYSURF, BLACK, (0, 640, 640, 7))
+    screen.rect(0, 640, 640, 7, BLACK)
 
-    font = pygame.font.Font('freesansbold.ttf', 24) #draw text for the buttons
-    if autoplay:
-        text = font.render("Auto", True, (0,255,0))
-    else:
-        text = font.render("Auto", True, (220,220,220))
-    textRect = text.get_rect()
-    textRect.center = (40, 680)
-    DISPLAYSURF.blit(text, textRect)
-
-    if aiwhite:
-        text = font.render("White", True, WHITE)
-    else:
-        text = font.render("Black", True, BLACK)
-    textRect = text.get_rect()
-    textRect.center = (120, 680)
-    DISPLAYSURF.blit(text, textRect)
-
-    text = font.render("Reset", True, BLACK)
-    textRect = text.get_rect()
-    textRect.center = (200, 680)
-    DISPLAYSURF.blit(text, textRect)
-
-    text = font.render("Back", True, BLACK)
-    textRect = text.get_rect()
-    textRect.center = (280, 680)
-    DISPLAYSURF.blit(text, textRect)
-
-    text = font.render("Flip", True, BLACK)
-    textRect = text.get_rect()
-    textRect.center = (360, 680)
-    DISPLAYSURF.blit(text, textRect)
-
-    text = font.render(dialog, True, BLACK)
-    textRect = text.get_rect()
-    textRect.center = (520, 680)
-    DISPLAYSURF.blit(text, textRect)
     
 
-    font = pygame.font.Font('FreeSerif.ttf', 76) #draw the markers
+    ########################### menu ###########################
+    if autoplay:
+        draw_text("Auto", 40, 680, (0,255,0))
+    else:
+        draw_text("Auto", 40, 680, (220,220,220))
+        
+    if aiwhite:
+        draw_text("White", 120, 680, WHITE)
+    else:
+        draw_text("Black", 120, 680, BLACK)
+        
+    draw_text("Reset", 200, 680, BLACK)
+    draw_text("Back", 280, 680, BLACK)
+    draw_text("Flip", 360, 680, BLACK)
+    draw_text(dialog, 520, 680, BLACK)
+    ########################### menu ###########################
+
+    screen.update_options(font=pygame.font.Font('FreeSerif.ttf', 76))
     for i in markers:
-        pygame.draw.circle(DISPLAYSURF, (0,255,0), (i[0] * 80 + 40, i[1] * 80 + 40), 20)
+        screen.circle(i[0] * 80 + 40, i[1] * 80 + 40, 20, (0,255,0))
     for i in indicators:
-        pygame.draw.circle(DISPLAYSURF, (255,0,0), (i[0] * 80 + 40, i[1] * 80 + 40), 20)
+        screen.circle(i[0] * 80 + 40, i[1] * 80 + 40, 20, (255,0,0))
 
     position = board.request_board_layout(flipped) #draw the pieces
     for y in range(len(position)):
@@ -93,6 +75,7 @@ board = E.ChessAi(lookahead=3)
 
 markers = []
 selected = ()
+
 making_move = False
 
 needupdate = 1
@@ -104,7 +87,7 @@ debug_play = False
 
 def AIPlay():
     indicators = []
-    move = board.makemove(board.board.turn, flipped)
+    move = board.make_move(board.board.turn, flipped)
     board.board.push(move)
     if not flipped:
         indicators.append((int(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].index(str(move)[2])), -int(str(move)[3]) + 8))
@@ -117,9 +100,8 @@ while True: # main game loop
     mouse = pygame.mouse.get_pos()
     mouse = (int(mouse[0] / 80) ,int(mouse[1] / 80))
 
-    if autoplay:
+    if autoplay and not game_over:
         if aiwhite and board.board.turn or not aiwhite and not board.board.turn or debug_play:
-            if not game_over:
                 AIPlay()
 
     for event in pygame.event.get():
@@ -134,10 +116,7 @@ while True: # main game loop
                 pass
             else:
                 piece_coord = mouse
-                if not flipped:
-                    markers = board.request_piece_move(mouse[0], -mouse[1] + 8, flipped)
-                else:
-                    markers = board.request_piece_move(mouse[0], mouse[1] + 1, flipped)
+                markers = board.request_piece_move(mouse[0], -mouse[1] + 8, flipped) if not flipped else board.request_piece_move(mouse[0], mouse[1] + 1, flipped)
             draw_checker_board(markers)
 
             ########################### buttons ###########################

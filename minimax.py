@@ -1,37 +1,52 @@
-import chess, copy, random
-def find_best_move(position, lookahead, player, push_move, find_moves, gameover, eval_func):
+import copy, random, time
+
+checked = 0
+
+def find_best_move(position, lookahead, player, push_move, find_moves, gameover, eval_func, bias):
+    global checked
+    checked = 0
+    start = time.time()
     print("checking")
     scores = []
     moves = find_moves(position)
     print("I" + "-" * len(moves) + "I", end="\r")
     for i, move in enumerate(moves):
-        print("I" + "#" * i, end="\r")
         score = 0
         temp_pos = copy.deepcopy(position)
         push_move(temp_pos, move)
         inf = float("inf")
-        scores.append(minimax(temp_pos, lookahead, -inf, inf, not player, push_move, find_moves, gameover, eval_func))
-    print(scores)
-    if not player:
-        x = [i for i in range(len(scores)) if scores[i] == max(scores)]
+        score += bias(temp_pos)
+        score += minimax(temp_pos, lookahead, -inf, inf, not player, push_move, find_moves, gameover, eval_func)
+        scores.append(score)
+
+        time_remaining = "  " + str(round((time.time() - start) * (len(moves) / (i + 1)) - (time.time() - start), 3)) + "s"
+        print("I" + "#" * i + "-" * (len(moves) - i) + "I" + time_remaining, end="\r")
+    print(scores, checked)
+    if player:
+        best_moves = [i for i in range(len(scores)) if scores[i] == max(scores)]
     else:
-        x = [i for i in range(len(scores)) if scores[i] == min(scores)]
-    return moves[random.choice(x)]
+        best_moves = [i for i in range(len(scores)) if scores[i] == min(scores)]
+    return moves[random.choice(best_moves)]
 
 def minimax(position, depth, alpha, beta, maximizingPlayer, push_move, find_moves, gameover, eval_func):
+    global checked
+    print(depth)
     if depth == 0 or gameover(position):
-       return eval_func(position)
+        checked += 1
+        return eval_func(position)
     if maximizingPlayer:
         maxEval = -float("inf")
         moves = find_moves(position)
         for move in moves:
             temp_pos = copy.deepcopy(position)
             push_move(temp_pos, move)
-            Eval = minimax(temp_pos, depth - 1, alpha, beta, False, push_move, find_moves, gameover, eval_func)
+            Eval = minimax(temp_pos, depth - 1, alpha, beta,False, push_move, find_moves, gameover, eval_func)
             maxEval = max(maxEval, Eval)
-            alpha = max(alpha, Eval)
-            if beta <= alpha:
+            alpha = max(alpha, maxEval)
+            '''
+            if beta <= alpha or False:
                 break
+                '''
         return maxEval
     else:
         minEval = float("inf")
@@ -41,21 +56,9 @@ def minimax(position, depth, alpha, beta, maximizingPlayer, push_move, find_move
             push_move(temp_pos, move)
             Eval = minimax(temp_pos, depth - 1, alpha, beta, True, push_move, find_moves, gameover, eval_func)
             minEval = min(minEval, Eval)
-            alpha = min(alpha, Eval)
+            beta = min(beta, minEval)
+            '''
             if beta >= alpha:
                 break
+                '''
         return minEval
-
-def evalboard(source):
-    values = {"p":1, "n":3, "b":3, "r":5, "q":9, "P":-1, "N":-3, "B":-3, "R":-5, "Q":-9, "k":0, "K":0}
-    board = copy.deepcopy(source)
-    pieces = board.piece_map()
-    pieces = list(pieces.values())
-    peicetotal = 0
-    for piece in pieces:
-        peicetotal -= values[str(piece)]
-    if board.is_checkmate():
-        peicetotal -= 10
-    return peicetotal
-
-
