@@ -5,7 +5,7 @@ from pygame.locals import *
 
 class Screen:
     def __init__(self, x, y, title="Window"):
-        self.buttons = []
+        self.clickables
 
         pygame.init()
         self.DISPLAYSURF = pygame.display.set_mode((x, y), 0, 32)
@@ -49,7 +49,7 @@ class Screen:
     def circle(self, x, y, radius, colour=(0, 0, 0)):
         pygame.draw.circle(self.DISPLAYSURF, colour, (x, y), radius)
 
-    def add_button(self, x, y, width, height, name=None, func=None, colour=(0, 0, 0), toggle=None, toggle_colour=False):
+    def add_button(self, x, y, width, height, name=None, func=None, colour=(0, 0, 0)):
         if name is None:
             self.buttons.append(Button(self, x, y, width, height, len(
                 self.buttons), func, colour, toggle, toggle_colour))
@@ -57,11 +57,54 @@ class Screen:
             self.buttons.append(Button(
                 self, x, y, width, height, name, func, colour, toggle, toggle_colour))
 
+    def add_switch(self, x, y, width, height, name=None, default=False, Tcolour=(0, 0, 0), Fcolour=(255, 255, 255)):
+        self.clickables.append(
+            Switch(self.screen, x, y, width, height, name, default, Tcolour, Fcolour))
+
 
 class Button:
-    def __init__(self, screen, x, y, width, height, name, func=False, colour=(0, 0, 0), toggle=None, toggle_colour=False):
+    def __init__(self, screen, x, y, width, height, name, func=False, colour=(0, 0, 0)):
         self.screen = screen
         self.name = name
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+
+        self.colour = colour
+        self.current_colour = colour
+
+        self.function = func
+        self.screen.rect(x, y, width, height, self.current_colour)
+
+    def click(self, x, y):
+        if x > self.x and x < self.x + self.width and y > self.y and y < self.y + self.height:
+            if self.toggle is not None:
+                if not self.toggle:
+                    if self.toggle_colour is not False:
+                        self.current_colour = self.toggle_colour
+                    self.toggle = True
+                else:
+                    if self.toggle_colour is not False:
+                        self.current_colour = self.colour
+                    self.toggle = False
+                self.update(self.current_colour)
+            if self.function is not None:
+                self.function()
+
+    def update(self, new_colour):
+        self.current_colour = new_colour
+        pygame.draw.rect(self.screen.DISPLAYSURF, self.current_colour,
+                         (self.x, self.y, self.width, self.height))
+
+
+class Switch:
+    def __init__(self, screen, x, y, width, height, name=None, default=False, Tcolour, Fcolour):
+        self.screen = screen
+        if name is not None:
+            self.name = len(screen.clickables)
+        else:
+            self.name = name
         self.x = x
         self.y = y
         self.width = width
@@ -73,8 +116,7 @@ class Button:
         self.toggle_colour = toggle_colour
         self.toggle = toggle
 
-        self.function = func
-        self.screen.rect(x, y, width, height, self.current_colour,)
+        self.screen.rect(x, y, width, height, self.current_colour)
 
     def click(self, x, y):
         if x > self.x and x < self.x + self.width and y > self.y and y < self.y + self.height:
