@@ -2,15 +2,12 @@ import engine2 as E
 import chess
 import ezgui
 
-
 screen = ezgui.Screen(640, 720)
-
 
 # colours
 BLACK, BLACKBOARD = (0, 0, 0), (118, 150, 86)
 WHITE, WHTIEBOARD = (255, 255, 255), (238, 238, 210)
 SELECTED = (186, 202, 68)
-
 
 def draw_text(text, x, y, c):
     screen.update_options(font=('freesansbold.ttf', 24))
@@ -60,19 +57,14 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
             if letter != '0':
                 if (x, y) == selected:
                     if letter.isupper():
-                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(
-                            letter)), x * 80 + 40, y * 80 + 40, c=(SELECTED))
+                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(letter)), x * 80 + 40, y * 80 + 40, c=(SELECTED))
                     else:
-                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(
-                            letter)), x * 80 + 40, y * 80 + 40, c=(SELECTED))
+                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(letter)), x * 80 + 40, y * 80 + 40, c=(SELECTED))
                 else:
                     if letter.isupper():
-                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(
-                            letter)), x * 80 + 40, y * 80 + 40, c=(WHITE))
+                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(letter)), x * 80 + 40, y * 80 + 40, c=(WHITE))
                     else:
-                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(
-                            letter)), x * 80 + 40, y * 80 + 40, c=(BLACK))
-
+                        screen.text(chess.Piece.unicode_symbol(chess.Piece.from_symbol(letter)), x * 80 + 40, y * 80 + 40, c=(BLACK))
 
 board = E.ChessAi(lookahead=3)
 
@@ -101,20 +93,35 @@ def AIPlay():
                                  'h'].index(str(move)[2])) + 7, int(str(move)[3]) - 1))
     draw_checker_board(indicators=indicators, dialog="Your turn")
 
-
-screen.add_button(0, 640, 80, 80, 'autoplay', colour=(
-    WHTIEBOARD), toggle=False)
+screen.add_switch(0, 640, 80, 80, 'autoplay', default=False, Tcolour=(WHTIEBOARD), Fcolour=(BLACKBOARD))
 
 draw_checker_board(markers, dialog="Welcome")
-
 
 def main():
     if autoplay and not game_over:
         if aiwhite and board.board.turn or not aiwhite and not board.board.turn or debug_play:
             AIPlay()
 
+def click(x, y):
+    global markers, piece_coord
+    mouse = (int(x / 80), int(y / 80))
+    if not game_over:
+        selected = mouse
+        promotion = ''
+        if selected in markers:  # check if clicked on piece or marker
+            if markers.count(selected) > 1:
+                promotion = input("Enter q, b, n, r for promotion")
+            board.coor_move(piece_coord[0], -piece_coord[1] + 8, selected[0], -selected[1] + 8, flipped, promotion=promotion)
+            markers.clear()
+            pass
+        else:
+            piece_coord = mouse
+            markers = board.request_piece_move(mouse[0], -mouse[1] + 8, flipped) if not flipped else board.request_piece_move(mouse[0], mouse[1] + 1, flipped)
+        draw_checker_board(markers)
 
-screen.run(main)
+
+
+screen.run(main, click)
 
 '''
 while True:  # main game loop
@@ -127,21 +134,6 @@ while True:  # main game loop
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONUP and not game_over:  # click
-            selected = mouse
-            promotion = ''
-            if selected in markers:  # check if clicked on piece or marker
-                if markers.count(selected) > 1:
-                    promotion = input("Enter q, b, n, r for promotion")
-                board.coor_move(piece_coord[0], -piece_coord[1] + 8,
-                                selected[0], -selected[1] + 8, flipped, promotion=promotion)
-                markers.clear()
-                pass
-            else:
-                piece_coord = mouse
-                markers = board.request_piece_move(
-                    mouse[0], -mouse[1] + 8, flipped) if not flipped else board.request_piece_move(mouse[0], mouse[1] + 1, flipped)
-            draw_checker_board(markers)
-
             '########################### buttons ###########################'
 
             if selected == (0, 8):
