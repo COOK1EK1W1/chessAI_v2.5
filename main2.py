@@ -200,6 +200,10 @@ while True:  # main game loop
         if event.type == pygame.KEYDOWN and not game_over:  # check if space has been pressed
             if event.key == pygame.K_SPACE:
                 AIPlay()
+            if event.key == pygame.K_p:
+                print(board.board.fen())
+            if event.key == pygame.K_q:
+                board.board = chess.Board(input("enter starting position"))
 
         if event.type == QUIT:  # check if the game has been quit
             pygame.quit()
