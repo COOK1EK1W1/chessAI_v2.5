@@ -1,5 +1,7 @@
 import cx_Freeze
 
+print("building")
+
 executables = [cx_Freeze.Executable("main2.py")]
 
 cx_Freeze.setup(
