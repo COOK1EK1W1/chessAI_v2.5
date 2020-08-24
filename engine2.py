@@ -62,10 +62,7 @@ class ChessAi:
         print(str([str(move) for move in self.board.legal_moves]))
         print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
         for i, move in enumerate(self.board.legal_moves):
-            time_remaining = "  " + str(round((time.time() - start) * (
-                len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s"
-            print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)
-                                             ) - i) + "I" + time_remaining, end="\r")
+            
             score = 0
             tempboard = self.board.copy()
             tempboard.push(move)
@@ -83,6 +80,8 @@ class ChessAi:
             score += minimax(tempboard, depth, -float("inf"),
                              float("inf"), not player)
             scores.append(score)
+            time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s"
+            print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
         print(scores, sum(scores) / len(scores))
         if player:
             x = [i for i in range(len(scores)) if scores[i] == max(scores)]
