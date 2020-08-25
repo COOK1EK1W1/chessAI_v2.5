@@ -110,7 +110,7 @@ game_over = False
 autoplay = False
 flipped = False
 aiwhite = False
-debug_play = True
+debug_play = False
 
 
 def AIPlay():
