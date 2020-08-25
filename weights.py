@@ -1,4 +1,10 @@
+#values from
 #https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/
+
+#white uppercase black lower case
+piecevalues = {"p":-10, "n":-30, "b":-30, "r":-50, "q":-90, 
+               "P": 10, "N": 30, "B": 30, "R": 50, "Q": 90, 
+               "k": -900, "K": 900, ".":0}
 
 king = [[-3.0,-4.0,-4.0,-5.0,-5.0,-4.0,-4.0,-3.0],
         [-3.0,-4.0,-4.0,-5.0,-5.0,-4.0,-4.0,-3.0],
@@ -54,19 +60,18 @@ pawn = [[ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [ 0.5, 1.0, 1.0,-2.0,-2.0, 1.0, 1.0, 0.5],
         [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 
-def __init__():
-    self.king = king
-    self.queen = queen
-    self.rook = rook
-    self.bishop = bishop
-    self.knight = knight
-    self.pawn = pawn
-    
-    self.king_B = king.reverse()
-    self.queen_B = queen.reverse()
-    self.rook_B = rook.reverse()
-    self.bishop_B = bishop.reverse()
-    self.knight_B = knight.reverse()
-    self.pawn_B = pawn.reverse()
+king.reverse()
+queen.reverse()
+rook.reverse()
+bishop.reverse()
+knight.reverse()
+pawn.reverse()
+
+king_B = king
+queen_B = queen
+rook_B = rook
+bishop_B = bishop
+knight_B = knight
+pawn_B = pawn
 
 

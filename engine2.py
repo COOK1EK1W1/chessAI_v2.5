@@ -4,9 +4,6 @@ import chess
 import weights
 
 # turn true == white
-values = {"p":-10, "n":-30, "b":-30, "r":-50, "q":-90, 
-          "P": 10, "N": 30, "B": 30, "R": 50, "Q": 90, 
-          "k": 900, "K": 900, ".":0}
 
 
 class ChessAi:
@@ -104,32 +101,32 @@ def evalboard(source):  # higher score for white
         for y in range(len(matrix)):
             for x in range(len(matrix[y])):
                 if matrix[y][x] == "K":
-                    peicetotal -= values["K"] - weights.king[y][x]
+                    peicetotal += weights.piecevalues["K"] + weights.king[y][x]
                 elif matrix[y][x] == "Q":
-                    peicetotal -= values["Q"] - weights.queen[y][x]
+                    peicetotal += weights.piecevalues["Q"] + weights.queen[y][x]
                 elif matrix[y][x] == "R":
-                    peicetotal -= values["R"] - weights.rook[y][x]
+                    peicetotal += weights.piecevalues["R"] + weights.rook[y][x]
                 elif matrix[y][x] == "B":
-                    peicetotal -= values["B"] - weights.bishop[y][x]
+                    peicetotal += weights.piecevalues["B"] + weights.bishop[y][x]
                 elif matrix[y][x] == "N":
-                    peicetotal -= values["N"] - weights.knight[y][x]
+                    peicetotal += weights.piecevalues["N"] + weights.knight[y][x]
                 elif matrix[y][x] == "P":
-                    peicetotal -= values["P"] - weights.pawn[y][x]
+                    peicetotal += weights.piecevalues["P"] + weights.pawn[y][x]
 
                 elif matrix[y][x] == "k":
-                    peicetotal -= values["k"] + weights.king_B[y][x]
+                    peicetotal += weights.piecevalues["k"] - weights.king_B[y][x]
                 elif matrix[y][x] == "q":
-                    peicetotal -= values["q"] + weights.queen_B[y][x]
+                    peicetotal += weights.piecevalues["q"] - weights.queen_B[y][x]
                 elif matrix[y][x] == "r":
-                    peicetotal -= values["r"] + weights.rook_B[y][x]
+                    peicetotal += weights.piecevalues["r"] - weights.rook_B[y][x]
                 elif matrix[y][x] == "b":
-                    peicetotal -= values["b"] + weights.bishop_B[y][x]
+                    peicetotal += weights.piecevalues["b"] - weights.bishop_B[y][x]
                 elif matrix[y][x] == "n":
-                    peicetotal -= values["n"] + weights.knight_B[y][x]
+                    peicetotal += weights.piecevalues["n"] - weights.knight_B[y][x]
                 elif matrix[y][x] == "p":
-                    peicetotal -= values["p"] + weights.pawn_B[y][x]
+                    peicetotal += weights.piecevalues["p"] - weights.pawn_B[y][x]
                 else:
-                    peicetotal -= values[matrix[y][x]]
+                    peicetotal += weights.piecevalues[matrix[y][x]]
     return peicetotal
 
 def make_matrix(board): #type(board) == chess.Board()
