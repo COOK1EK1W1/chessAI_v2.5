@@ -1,0 +1,1 @@
+pyinstaller --onefile main2.py
