@@ -100,33 +100,34 @@ def evalboard(source):  # higher score for white
     else:
         for y in range(len(matrix)):
             for x in range(len(matrix[y])):
-                if matrix[y][x] == "K":
-                    peicetotal += weights.piecevalues["K"] + weights.king[y][x]
-                elif matrix[y][x] == "Q":
-                    peicetotal += weights.piecevalues["Q"] + weights.queen[y][x]
+
+                if matrix[y][x] == "p":
+                    peicetotal += weights.piecevalues["p"] - weights.pawn_B[y][x]
+                elif matrix[y][x] == "P":
+                    peicetotal += weights.piecevalues["P"] + weights.pawn[y][x]
+                    
                 elif matrix[y][x] == "R":
                     peicetotal += weights.piecevalues["R"] + weights.rook[y][x]
                 elif matrix[y][x] == "B":
                     peicetotal += weights.piecevalues["B"] + weights.bishop[y][x]
                 elif matrix[y][x] == "N":
                     peicetotal += weights.piecevalues["N"] + weights.knight[y][x]
-                elif matrix[y][x] == "P":
-                    peicetotal += weights.piecevalues["P"] + weights.pawn[y][x]
-
-                elif matrix[y][x] == "k":
-                    peicetotal += weights.piecevalues["k"] - weights.king_B[y][x]
-                elif matrix[y][x] == "q":
-                    peicetotal += weights.piecevalues["q"] - weights.queen_B[y][x]
                 elif matrix[y][x] == "r":
                     peicetotal += weights.piecevalues["r"] - weights.rook_B[y][x]
                 elif matrix[y][x] == "b":
                     peicetotal += weights.piecevalues["b"] - weights.bishop_B[y][x]
                 elif matrix[y][x] == "n":
                     peicetotal += weights.piecevalues["n"] - weights.knight_B[y][x]
-                elif matrix[y][x] == "p":
-                    peicetotal += weights.piecevalues["p"] - weights.pawn_B[y][x]
-                else:
-                    peicetotal += weights.piecevalues[matrix[y][x]]
+
+                elif matrix[y][x] == "K":
+                    peicetotal += weights.piecevalues["K"] + weights.king[y][x]
+                elif matrix[y][x] == "Q":
+                    peicetotal += weights.piecevalues["Q"] + weights.queen[y][x]
+                elif matrix[y][x] == "k":
+                    peicetotal += weights.piecevalues["k"] - weights.king_B[y][x]
+                elif matrix[y][x] == "q":
+                    peicetotal += weights.piecevalues["q"] - weights.queen_B[y][x]
+
     return peicetotal
 
 def make_matrix(board): #type(board) == chess.Board()
