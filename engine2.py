@@ -79,7 +79,7 @@ class ChessAi:
             score += minimax(tempboard, depth, -float("inf"),
                              float("inf"), not player)
             scores.append(score)
-            time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s"
+            time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s   "
             print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
         print(scores, sum(scores) / len(scores))
         if player:
