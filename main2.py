@@ -99,7 +99,7 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
                 DISPLAYSURF.blit(text, textRect)
 
 
-board = E.ChessAi(lookahead=0)
+board = E.ChessAi(lookahead=3)
 
 markers = []
 selected = ()
