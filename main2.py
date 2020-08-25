@@ -13,7 +13,7 @@ font = pygame.font.Font('FreeSerif.ttf', 76)
 
 # colours
 BLACK, BLACKBOARD = (0, 0, 0), (118, 150, 86)
-WHITE, WHTIEBOARD = (255, 255, 255), (238, 238, 210)
+WHITE, WHTIEBOARD = (0, 255, 255), (238, 238, 210)
 SELECTED = (186, 202, 68)
 
 
@@ -110,7 +110,7 @@ game_over = False
 autoplay = False
 flipped = False
 aiwhite = False
-debug_play = False
+debug_play = True
 
 
 def AIPlay():

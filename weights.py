@@ -61,3 +61,12 @@ def __init__():
     self.bishop = bishop
     self.knight = knight
     self.pawn = pawn
+    
+    self.king_B = king.reverse()
+    self.queen_B = queen.reverse()
+    self.rook_B = rook.reverse()
+    self.bishop_B = bishop.reverse()
+    self.knight_B = knight.reverse()
+    self.pawn_B = pawn.reverse()
+
+
