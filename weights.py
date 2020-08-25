@@ -6,6 +6,7 @@ piecevalues = {"p":-10, "n":-30, "b":-30, "r":-50, "q":-90,
                "P": 10, "N": 30, "B": 30, "R": 50, "Q": 90, 
                "k": -900, "K": 900, ".":0}
 
+
 king = [[-3.0,-4.0,-4.0,-5.0,-5.0,-4.0,-4.0,-3.0],
         [-3.0,-4.0,-4.0,-5.0,-5.0,-4.0,-4.0,-3.0],
         [-3.0,-4.0,-4.0,-5.0,-5.0,-4.0,-4.0,-3.0],
@@ -60,6 +61,13 @@ pawn = [[ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [ 0.5, 1.0, 1.0,-2.0,-2.0, 1.0, 1.0, 0.5],
         [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 
+king_W = list(king)
+queen_W = list(queen)
+rook_W = list(rook)
+bishop_W = list(bishop)
+knight_W = list(knight)
+pawn_W = list(pawn)
+
 king.reverse()
 queen.reverse()
 rook.reverse()
@@ -73,5 +81,3 @@ rook_B = rook
 bishop_B = bishop
 knight_B = knight
 pawn_B = pawn
-
-
