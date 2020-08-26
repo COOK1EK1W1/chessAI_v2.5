@@ -6,12 +6,15 @@ from pygame.locals import *
 
 pygame.init()
 
-DISPLAYSURF = pygame.display.set_mode((640, 720), 0, 32)
+#Scale
+scale = 100
+
+DISPLAYSURF = pygame.display.set_mode((scale * 8, scale * 9), 0, 32)
 
 pygame.display.set_caption('Albert the chess ai')
 font = pygame.font.Font('FreeSerif.ttf', 76)
 
-# colours
+#Colours
 BLACK, BLACKBOARD = (0, 0, 0), (118, 150, 86)
 WHITE, WHTIEBOARD = (0, 0, 0), (238, 238, 210)
 SELECTED = (186, 202, 68)
@@ -22,20 +25,20 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
     for i in range(64):
         x, y = i % 8, int(i / 8)
         if x % 2 == 0 and y % 2 == 1:
-            pygame.draw.rect(DISPLAYSURF, BLACKBOARD, (x * 80, y * 80, 80, 80))
+            pygame.draw.rect(DISPLAYSURF, BLACKBOARD, (x * scale, y * scale, scale, scale))
         if x % 2 == 1 and y % 2 == 0:
-            pygame.draw.rect(DISPLAYSURF, BLACKBOARD, (x * 80, y * 80, 80, 80))
+            pygame.draw.rect(DISPLAYSURF, BLACKBOARD, (x * scale, y * scale, scale, scale))
 
-    pygame.draw.rect(DISPLAYSURF, BLACK, (0, 640, 640, 7))
+    pygame.draw.rect(DISPLAYSURF, BLACK, (0, scale * 8, scale * 8, 7))
 
     # draw text for the buttons
-    font = pygame.font.Font('FreeSerif.ttf', 24)
+    font = pygame.font.Font('FreeSerif.ttf', int(scale / 4))
     if autoplay:
         text = font.render("Auto", True, (0, 255, 0))
     else:
         text = font.render("Auto", True, (220, 220, 220))
     textRect = text.get_rect()
-    textRect.center = (40, 680)
+    textRect.center = (scale / 2, scale * 8.5)
     DISPLAYSURF.blit(text, textRect)
 
     if aiwhite:
@@ -43,36 +46,34 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
     else:
         text = font.render("Black", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (120, 680)
+    textRect.center = (scale * 1.5, scale * 8.5)
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render("Reset", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (200, 680)
+    textRect.center = (scale * 2.5, scale * 8.5)
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render("Back", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (280, 680)
+    textRect.center = (scale * 3.5, scale * 8.5)
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render("Flip", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (360, 680)
+    textRect.center = (scale * 4.5, scale * 8.5)
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render(dialog, True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (520, 680)
+    textRect.center = (scale * 6.5, scale * 8.5)
     DISPLAYSURF.blit(text, textRect)
 
-    font = pygame.font.Font('FreeSerif.ttf', 76)  # draw the markers
+    font = pygame.font.Font('FreeSerif.ttf', scale)  # draw the markers
     for i in markers:
-        pygame.draw.circle(DISPLAYSURF, (0, 255, 0),
-                           (i[0] * 80 + 40, i[1] * 80 + 40), 20)
+        pygame.draw.circle(DISPLAYSURF, (0, 255, 0),(int(i[0] * scale + scale / 2), int(i[1] * scale + scale / 2)), int(scale / 4))
     for i in indicators:
-        pygame.draw.circle(DISPLAYSURF, (255, 0, 0),
-                           (i[0] * 80 + 40, i[1] * 80 + 40), 20)
+        pygame.draw.circle(DISPLAYSURF, (255, 0, 0),(int(i[0] * scale + scale / 2), int(i[1] * scale + scale / 2)), int(scale / 4))
 
     position = board.request_board_layout(flipped)  # draw the pieces
     for y in range(len(position)):
@@ -95,7 +96,7 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
                         text = font.render(chess.Piece.unicode_symbol(
                             chess.Piece.from_symbol(letter)), True, BLACK)
                 textRect = text.get_rect()
-                textRect.center = (x * 80 + 40, y * 80 + 40)
+                textRect.center = (x * scale + scale / 2, y * scale + scale / 2)
                 DISPLAYSURF.blit(text, textRect)
 
 
@@ -128,7 +129,7 @@ print(E.evalboard(board.board))
 draw_checker_board(markers, dialog="Welcome")
 while True:  # main game loop
     mouse = pygame.mouse.get_pos()
-    mouse = (int(mouse[0] / 80), int(mouse[1] / 80))
+    mouse = (int(mouse[0] / scale), int(mouse[1] / scale))
 
     if autoplay:
         if aiwhite and board.board.turn or not aiwhite and not board.board.turn or debug_play:
