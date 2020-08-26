@@ -3,6 +3,7 @@ import random
 import chess
 import weights
 
+
 # turn true == white
 
 
@@ -59,11 +60,14 @@ class ChessAi:
         scores = []
         score = 0
 
+        board_matrix = make_matrix(self.board)
         board_score = evalboard(self.board)
         print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
         for i, move in enumerate(self.board.legal_moves):
-            newboardscore = evalmove(self.board, board_score, move)
-
+            
+            newboardscore = evalmove(self.board, copy.deepcopy(board_score), board_matrix, move)
+            newboardmatrix = matrixmove(self.board, board_matrix, move)
+            
             score = 0
             tempboard = self.board.copy()
             tempboard.push(move)
@@ -79,7 +83,7 @@ class ChessAi:
                     score += 0.5
                 else:
                     score -= 0.5
-            score += minimax(tempboard, depth, -float("inf"), float("inf"), not player, newboardscore)
+            score += minimax(tempboard, depth, -float("inf"), float("inf"), not player, newboardscore, newboardmatrix)
             scores.append(score)
             time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s   "
             print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
@@ -90,18 +94,30 @@ class ChessAi:
             x = [i for i in range(len(scores)) if scores[i] == min(scores)]
         return list(self.board.legal_moves)[random.choice(x)]
 
-def evalmove(source, source_score, move):
+def matrixmove(source, source_matrix, move):
     columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     x1 = columns.index(str(move)[0])
     y1 = -int(str(move)[1]) + 8
     x2 = columns.index(str(move)[2])
     y2 = -int(str(move)[3]) + 8
-    matrixboard = make_matrix(source)
+
+    newmatrix = [[j for j in i] for i in source_matrix]
+    newmatrix[y1][x1] = '.'
+    newmatrix[y2][x2] = source_matrix[y1][x1]
+    return newmatrix
+
+def evalmove(source, source_score, source_matrix, move):
+    columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    x1 = columns.index(str(move)[0])
+    y1 = -int(str(move)[1]) + 8
+    x2 = columns.index(str(move)[2])
+    y2 = -int(str(move)[3]) + 8
+
     newscore = source_score
-    prevpiece = matrixboard[y2][x2]
+    prevpiece = source_matrix[y2][x2]
 
     newscore -= (weights.piecevalues[prevpiece] + weights.positionweights[prevpiece][y2][x2]) * (prevpiece != '.')
-    piecename = matrixboard[y1][x1]
+    piecename = source_matrix[y1][x1]
 
     newscore += weights.positionweights[piecename][y2][x2] - weights.positionweights[piecename][y1][x1]
 
@@ -142,16 +158,17 @@ def make_matrix(board):
         foo.append(foo2)
     return foo
 
-def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore):
+def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore, board_matrix):
     if depth == 0 or board.is_game_over():
         return boardscore
     if maximizingPlayer:
         maxEval = -float("inf")
         for i, move in enumerate(board.legal_moves):
             tempboard = board.copy()
-            newboardscore = evalmove(tempboard, boardscore, move)
+            newboardscore = evalmove(tempboard, boardscore, board_matrix, move)
+            newboardmatrix = matrixmove(board, board_matrix, move)
             tempboard.push(move)
-            Eval = minimax(tempboard, depth - 1, alpha, beta, False, newboardscore)
+            Eval = minimax(tempboard, depth - 1, alpha, beta, False, newboardscore, newboardmatrix)
             maxEval = max(maxEval, Eval)
             alpha = max(alpha, Eval)
             if beta <= alpha:
@@ -161,9 +178,10 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore):
         minEval = float("inf")
         for i, move in enumerate(board.legal_moves):
             tempboard = board.copy()
-            newboardscore = evalmove(tempboard, boardscore, move)
+            newboardscore = evalmove(tempboard, boardscore, board_matrix, move)
+            newboardmatrix = matrixmove(board, board_matrix, move)
             tempboard.push(move)
-            Eval = minimax(tempboard, depth - 1, alpha, beta, True, newboardscore)
+            Eval = minimax(tempboard, depth - 1, alpha, beta, True, newboardscore, newboardmatrix)
             minEval = min(minEval, Eval)
             beta = min(beta, Eval)
             if beta <= alpha:
