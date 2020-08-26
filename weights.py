@@ -61,23 +61,34 @@ pawn = [[ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [ 0.5, 1.0, 1.0,-2.0,-2.0, 1.0, 1.0, 0.5],
         [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 
-king_W = list(king)
-queen_W = list(queen)
-rook_W = list(rook)
-bishop_W = list(bishop)
-knight_W = list(knight)
-pawn_W = list(pawn)
+blank = [[ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 
-king.reverse()
-queen.reverse()
-rook.reverse()
-bishop.reverse()
-knight.reverse()
-pawn.reverse()
 
-king_B = king
-queen_B = queen
-rook_B = rook
-bishop_B = bishop
-knight_B = knight
-pawn_B = pawn
+def reversed(list1):
+    list2 = list(list1)
+    list2.reverse()
+    return list2
+
+def mult(list1):
+    return [[j*-1 for j in i] for i in list1]
+
+positionweights = {"k":mult(reversed(pawn)),
+                   "K":pawn,
+                   "q":mult(reversed(queen)),
+                   "Q":queen,
+                   "r":mult(reversed(rook)),
+                   "R":rook,
+                   "b":mult(reversed(bishop)),
+                   "B":bishop,
+                   "n":mult(reversed(knight)),
+                   "N":knight,
+                   "p":mult(reversed(pawn)),
+                   "P":pawn,
+                   ".":blank}

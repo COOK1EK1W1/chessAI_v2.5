@@ -58,13 +58,16 @@ class ChessAi:
         depth = self.depth
         scores = []
         score = 0
-        print(str([str(move) for move in self.board.legal_moves]))
+
+        board_score = evalboard(self.board)
         print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
         for i, move in enumerate(self.board.legal_moves):
-            
+            newboardscore = evalmove(self.board, board_score, move)
+
             score = 0
             tempboard = self.board.copy()
             tempboard.push(move)
+
             sanmove = str(self.board.san(move))
             if "#" in sanmove:
                 if player:
@@ -76,8 +79,7 @@ class ChessAi:
                     score += 0.5
                 else:
                     score -= 0.5
-            score += minimax(tempboard, depth, -float("inf"),
-                             float("inf"), not player)
+            score += minimax(tempboard, depth, -float("inf"), float("inf"), not player, newboardscore)
             scores.append(score)
             time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s   "
             print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
@@ -88,11 +90,31 @@ class ChessAi:
             x = [i for i in range(len(scores)) if scores[i] == min(scores)]
         return list(self.board.legal_moves)[random.choice(x)]
 
+def evalmove(source, source_score, move):
+    columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    x1 = columns.index(str(move)[0])
+    y1 = -int(str(move)[1]) + 8
+    x2 = columns.index(str(move)[2])
+    y2 = -int(str(move)[3]) + 8
+    matrixboard = make_matrix(source)
+    newscore = source_score
+    prevpiece = matrixboard[y2][x2]
+
+    newscore -= (weights.piecevalues[prevpiece] + weights.positionweights[prevpiece][y2][x2]) * (prevpiece != '.')
+    piecename = matrixboard[y1][x1]
+
+    newscore += weights.positionweights[piecename][y2][x2] - weights.positionweights[piecename][y1][x1]
+
+    #testboard = source.copy()
+    #testboard.push(move)
+    #print(newscore - evalboard(testboard))
+    return newscore
+
 
 def evalboard(source):  # higher score for white
     matrix = make_matrix(source)
     peicetotal = 0
-    if source.is_game_over() and source.turn:
+    if source.is_game_over():
         if source.turn:
             peicetotal -= 10
         else:
@@ -101,41 +123,16 @@ def evalboard(source):  # higher score for white
         for y in range(len(matrix)):
             for x in range(len(matrix[y])):
                 piece = matrix[y][x]
-                if piece == "p":
-                    peicetotal += weights.piecevalues["p"] - weights.pawn_B[y][x]
-                elif piece == "P":
-                    peicetotal += weights.piecevalues["P"] + weights.pawn_W[y][x]
-                    
-                elif piece == "R":
-                    peicetotal += weights.piecevalues["R"] + weights.rook_W[y][x]
-                elif piece == "B":
-                    peicetotal += weights.piecevalues["B"] + weights.bishop_W[y][x]
-                elif piece == "N":
-                    peicetotal += weights.piecevalues["N"] + weights.knight_W[y][x]
-                elif piece == "r":
-                    peicetotal += weights.piecevalues["r"] - weights.rook_B[y][x]
-                elif piece == "b":
-                    peicetotal += weights.piecevalues["b"] - weights.bishop_B[y][x]
-                elif piece == "n":
-                    peicetotal += weights.piecevalues["n"] - weights.knight_B[y][x]
-
-                elif piece == "K":
-                    peicetotal += weights.piecevalues["K"] + weights.king_W[y][x]
-                elif piece == "Q":
-                    peicetotal += weights.piecevalues["Q"] + weights.queen_W[y][x]
-                elif piece == "k":
-                    peicetotal += weights.piecevalues["k"] - weights.king_B[y][x]
-                elif piece == "q":
-                    peicetotal += weights.piecevalues["q"] - weights.queen_B[y][x]
+                peicetotal += weights.piecevalues[piece] + weights.positionweights[piece][y][x]
     return peicetotal
 
-def make_matrix(board): #type(board) == chess.Board()
+def make_matrix(board):
     pgn = board.epd()
     foo = []  #Final board
     pieces = pgn.split(" ", 1)[0]
     rows = pieces.split("/")
     for row in rows:
-        foo2 = []  #This is the row I make
+        foo2 = []
         for thing in row:
             if thing.isdigit():
                 for i in range(0, int(thing)):
@@ -145,15 +142,16 @@ def make_matrix(board): #type(board) == chess.Board()
         foo.append(foo2)
     return foo
 
-def minimax(board, depth, alpha, beta, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore):
     if depth == 0 or board.is_game_over():
-        return evalboard(board)
+        return boardscore
     if maximizingPlayer:
         maxEval = -float("inf")
-        for move in board.legal_moves:
+        for i, move in enumerate(board.legal_moves):
             tempboard = board.copy()
+            newboardscore = evalmove(tempboard, boardscore, move)
             tempboard.push(move)
-            Eval = minimax(tempboard, depth - 1, alpha, beta, False)
+            Eval = minimax(tempboard, depth - 1, alpha, beta, False, newboardscore)
             maxEval = max(maxEval, Eval)
             alpha = max(alpha, Eval)
             if beta <= alpha:
@@ -161,10 +159,11 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         return maxEval
     else:
         minEval = float("inf")
-        for move in board.legal_moves:
+        for i, move in enumerate(board.legal_moves):
             tempboard = board.copy()
+            newboardscore = evalmove(tempboard, boardscore, move)
             tempboard.push(move)
-            Eval = minimax(tempboard, depth - 1, alpha, beta, True)
+            Eval = minimax(tempboard, depth - 1, alpha, beta, True, newboardscore)
             minEval = min(minEval, Eval)
             beta = min(beta, Eval)
             if beta <= alpha:
