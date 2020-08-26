@@ -32,7 +32,7 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
     pygame.draw.rect(DISPLAYSURF, BLACK, (0, scale * 8, scale * 8, 7))
 
     # draw text for the buttons
-    font = pygame.font.Font('FreeSerif.ttf', int(scale / 4))
+    font = pygame.font.Font('Montserrat-Regular.ttf', int(scale / 3))
     if autoplay:
         text = font.render("Auto", True, (0, 255, 0))
     else:
