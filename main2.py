@@ -13,7 +13,7 @@ font = pygame.font.Font('FreeSerif.ttf', 76)
 
 # colours
 BLACK, BLACKBOARD = (0, 0, 0), (118, 150, 86)
-WHITE, WHTIEBOARD = (255, 255, 255), (238, 238, 210)
+WHITE, WHTIEBOARD = (0, 0, 0), (238, 238, 210)
 SELECTED = (186, 202, 68)
 
 
