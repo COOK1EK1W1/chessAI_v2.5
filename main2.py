@@ -7,7 +7,7 @@ from pygame.locals import *
 pygame.init()
 
 #Scale
-scale = 100
+scale = 65
 
 DISPLAYSURF = pygame.display.set_mode((scale * 8, scale * 9), 0, 32)
 
@@ -38,7 +38,7 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
     else:
         text = font.render("Auto", True, (220, 220, 220))
     textRect = text.get_rect()
-    textRect.center = (scale / 2, scale * 8.5)
+    textRect.center = (int(scale / 2), int(scale * 8.5))
     DISPLAYSURF.blit(text, textRect)
 
     if aiwhite:
@@ -46,27 +46,27 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
     else:
         text = font.render("Black", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (scale * 1.5, scale * 8.5)
+    textRect.center = (int(scale * 1.5), int(scale * 8.5))
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render("Reset", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (scale * 2.5, scale * 8.5)
+    textRect.center = (int(scale * 2.5), int(scale * 8.5))
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render("Back", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (scale * 3.5, scale * 8.5)
+    textRect.center = (int(scale * 3.5), int(scale * 8.5))
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render("Flip", True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (scale * 4.5, scale * 8.5)
+    textRect.center = (int(scale * 4.5), int(scale * 8.5))
     DISPLAYSURF.blit(text, textRect)
 
     text = font.render(dialog, True, BLACK)
     textRect = text.get_rect()
-    textRect.center = (scale * 6.5, scale * 8.5)
+    textRect.center = (int(scale * 6.5), int(scale * 8.5))
     DISPLAYSURF.blit(text, textRect)
 
     font = pygame.font.Font('FreeSerif.ttf', scale)  # draw the markers
@@ -96,7 +96,7 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
                         text = font.render(chess.Piece.unicode_symbol(
                             chess.Piece.from_symbol(letter)), True, BLACK)
                 textRect = text.get_rect()
-                textRect.center = (x * scale + scale / 2, y * scale + scale / 2)
+                textRect.center = (int(x * scale) + int(scale / 2), int(y * scale) + int(scale / 2))
                 DISPLAYSURF.blit(text, textRect)
 
 
