@@ -125,7 +125,6 @@ def AIPlay():
                                  'h'].index(str(move)[2])) + 7, int(str(move)[3]) - 1))
     draw_checker_board(indicators=indicators, dialog="Your turn")
 
-print(E.evalboard(board.board))
 draw_checker_board(markers, dialog="Welcome")
 while True:  # main game loop
     mouse = pygame.mouse.get_pos()

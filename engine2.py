@@ -3,6 +3,8 @@ import random
 import chess
 import weights
 
+import timeit
+
 # turn true == white
 
 
@@ -61,6 +63,7 @@ class ChessAi:
 
         board_matrix = make_matrix(self.board)
         board_score = evalboard(self.board)
+        print([str(i) for i in list(self.board.legal_moves)])
         print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
         for i, move in enumerate(self.board.legal_moves):
             
@@ -87,7 +90,7 @@ class ChessAi:
 
             time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s   "
             print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
-        print(scores, sum(scores) / len(scores))
+        print([str(i) for i in scores], min(scores))
         if player:
             x = [i for i in range(len(scores)) if scores[i] == max(scores)]
         else:
@@ -95,23 +98,25 @@ class ChessAi:
         return list(self.board.legal_moves)[random.choice(x)]
 
 def matrixmove(source, source_matrix, move):
+    move = str(move)
     columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-    x1 = columns.index(str(move)[0])
-    y1 = -int(str(move)[1]) + 8
-    x2 = columns.index(str(move)[2])
-    y2 = -int(str(move)[3]) + 8
+    x1 = columns.index(move[0])
+    y1 = -int(move[1]) + 8
+    x2 = columns.index(move[2])
+    y2 = -int(move[3]) + 8
 
-    newmatrix = [[j for j in i] for i in source_matrix]
+    newmatrix = [i[:] for i in source_matrix]
     newmatrix[y1][x1] = '.'
     newmatrix[y2][x2] = source_matrix[y1][x1]
     return newmatrix
 
 def evalmove(source, source_score, source_matrix, move):
+    move = str(move)
     columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-    x1 = columns.index(str(move)[0])
-    y1 = -int(str(move)[1]) + 8
-    x2 = columns.index(str(move)[2])
-    y2 = -int(str(move)[3]) + 8
+    x1 = columns.index(move[0])
+    y1 = -int(move[1]) + 8
+    x2 = columns.index(move[2])
+    y2 = -int(move[3]) + 8
 
     newscore = source_score
     prevpiece = source_matrix[y2][x2]
@@ -158,7 +163,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore, board_matri
     if board.is_game_over():
         return boardscore
     if maximizingPlayer:
-        maxEval = -float("inf")
+        maxEval = -9999
         for i, move in enumerate(board.legal_moves):
             tempboard = board.copy()
             newboardscore = evalmove(tempboard, boardscore, board_matrix, move)
@@ -174,7 +179,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore, board_matri
                 break
         return maxEval
     else:
-        minEval = float("inf")
+        minEval = 9999
         for i, move in enumerate(board.legal_moves):
             tempboard = board.copy()
             newboardscore = evalmove(tempboard, boardscore, board_matrix, move)
