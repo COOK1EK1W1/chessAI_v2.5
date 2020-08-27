@@ -75,21 +75,13 @@ class ChessAi:
             tempboard.push(move)
 
             sanmove = str(self.board.san(move))
-            if "#" in sanmove:
-                if player:
-                    score += 100
-                else:
-                    score -= 100
-            if "+" in sanmove:
-                if player:
-                    score += 0.5
-                else:
-                    score -= 0.5
+            score += 100 * ("#" in sanmove and player) - 100 * ("#" in sanmove and not player)
+            score += 0.5 * ("+" in sanmove and player) - 0.5 * ("+" in sanmove and not player)
             score += minimax(tempboard, depth, -float("inf"), float("inf"), not player, newboardscore, newboardmatrix)
             scores.append(score)
 
             time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s   "
-            print("I" + "#" * i + "-" * (len(list(self.board.legal_moves)) - i) + "I" + time_remaining, end="\r")
+            print("I" + "#" * (i + 1) + "-" * (len(list(self.board.legal_moves)) - i - 1) + "I" + time_remaining, end="\r")
         print([str(i) for i in scores], min(scores))
         if player:
             x = [i for i in range(len(scores)) if scores[i] == max(scores)]

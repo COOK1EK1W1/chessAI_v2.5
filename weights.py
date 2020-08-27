@@ -92,8 +92,3 @@ positionweights = {"k":mult(reversed(pawn)),
                    "p":mult(reversed(pawn)),
                    "P":pawn,
                    ".":blank}
-
-
-def printboard(board):
-    for i in board:
-        print(i)
