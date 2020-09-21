@@ -62,8 +62,8 @@ def get_board_score(board):
 
 model = keras.Sequential([
     keras.layers.Flatten(input_shape=(64, 12)),
-    keras.layers.Dense(256, activation='relu'),
-    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(32, activation='relu'),
     keras.layers.Dense(2)
 ])
 
@@ -75,10 +75,10 @@ model.compile(loss=keras.losses.categorical_crossentropy,
 
 
 
-for i in range(10):
+for i in range(50):
     goodboard = []
     badboard = []
-    for Game in range(1000):
+    for Game in range(100):
         game_board = chess.Board()
         for i in range(random.randint(0,5)):
             game_board.push(random.choice(list(game_board.legal_moves)))
@@ -86,10 +86,10 @@ for i in range(10):
         white_boards = []
         black_boards = []
         for time in range(75):
-            if game_board.is_game_over():
+            if board.is_game_over():
+                print("hello")
                 break
             available_moves = game_board.legal_moves
-
             predict_boards = []
             for move in available_moves:
                 tempboard = game_board.copy()
@@ -117,17 +117,20 @@ for i in range(10):
             else:
                 black_boards.append(convert_to_int(game_board))
 
-        score = get_board_score(game_board)
-        if score > 0:
-            goodboard += white_boards
-            badboard += black_boards
-        else:
-            goodboard += black_boards
-            badboard += white_boards
+            
+
+        if board.is_checkmate():
+            if not game_board.turn:
+                goodboard += white_boards
+                badboard += black_boards
+            else:
+                goodboard += black_boards
+                badboard += white_boards
+            print("win")
+            
+
         if Game % 10 == 0:
             print(Game)
-
-
 
     boards = np.array(goodboard + badboard)
     print(np.shape(boards))
