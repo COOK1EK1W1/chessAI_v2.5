@@ -66,6 +66,7 @@ class ChessAi:
         print([str(i) for i in list(self.board.legal_moves)])
         print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
         for i, move in enumerate(self.board.legal_moves):
+            #dont copy board????????
             
             newboardscore = evalmove(self.board, board_score, board_matrix, move)
             newboardmatrix = matrixmove(self.board, board_matrix, move)
