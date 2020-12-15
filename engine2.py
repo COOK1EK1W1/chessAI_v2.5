@@ -63,26 +63,27 @@ class ChessAi:
 
         board_matrix = make_matrix(self.board)
         board_score = evalboard(self.board)
-        print([str(i) for i in list(self.board.legal_moves)])
-        print("I" + "-" * len(list(self.board.legal_moves)) + "I", end="\r")
-        for i, move in enumerate(self.board.legal_moves):
-            #dont copy board????????
+        movesa = self.board.legal_moves
+        print([str(i) for i in list(movesa)])
+        print("I" + "-" * len(list(movesa)) + "I", end="\r")
+        for i, move in enumerate(movesa):
             
             newboardscore = evalmove(self.board, board_score, board_matrix, move)
             newboardmatrix = matrixmove(self.board, board_matrix, move)
             
             score = 0
-            tempboard = self.board.copy()
-            tempboard.push(move)
+            
 
             sanmove = str(self.board.san(move))
+            self.board.push(move)
             score += 100 * ("#" in sanmove and player) - 100 * ("#" in sanmove and not player)
             score += 0.5 * ("+" in sanmove and player) - 0.5 * ("+" in sanmove and not player)
-            score += minimax(tempboard, depth, -float("inf"), float("inf"), not player, newboardscore, newboardmatrix)
+            score += minimax(self.board, depth, -float("inf"), float("inf"), not player, newboardscore, newboardmatrix)
             scores.append(score)
-
-            time_remaining = "  " + str(round((time.time() - start) * (len(list(self.board.legal_moves)) / (i + 1)) - (time.time() - start), 3)) + "s   "
-            print("I" + "#" * (i + 1) + "-" * (len(list(self.board.legal_moves)) - i - 1) + "I" + time_remaining, end="\r")
+            self.board.pop()
+            
+            time_remaining = "  " + str(round((time.time() - start) * (len(list(movesa)) / (i + 1)) - (time.time() - start), 3)) + "s   "
+            print("I" + "#" * (i + 1) + "-" * (len(list(movesa)) - i - 1) + "I" + time_remaining, end="\r")
         print([str(i) for i in scores], min(scores))
         if player:
             x = [i for i in range(len(scores)) if scores[i] == max(scores)]
@@ -122,6 +123,7 @@ def evalmove(source, source_score, source_matrix, move):
 
 
 def evalboard(source):  # higher score for white
+    print("hyello")
     matrix = make_matrix(source)
     peicetotal = 0
     if source.is_game_over():
@@ -158,14 +160,14 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore, board_matri
     if maximizingPlayer:
         maxEval = -9999
         for i, move in enumerate(board.legal_moves):
-            tempboard = board.copy()
-            newboardscore = evalmove(tempboard, boardscore, board_matrix, move)
+            newboardscore = evalmove(board, boardscore, board_matrix, move)
             if depth-1 == 0:
                 Eval = newboardscore
             else:
                 newboardmatrix = matrixmove(board, board_matrix, move)
-                tempboard.push(move)
-                Eval = minimax(tempboard, depth - 1, alpha, beta, False, newboardscore, newboardmatrix)
+                board.push(move)
+                Eval = minimax(board, depth - 1, alpha, beta, False, newboardscore, newboardmatrix)
+                board.pop()
             maxEval = max(maxEval, Eval)
             alpha = max(alpha, Eval)
             if beta <= alpha:
@@ -174,14 +176,14 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, boardscore, board_matri
     else:
         minEval = 9999
         for i, move in enumerate(board.legal_moves):
-            tempboard = board.copy()
-            newboardscore = evalmove(tempboard, boardscore, board_matrix, move)
+            newboardscore = evalmove(board, boardscore, board_matrix, move)
             if depth-1 == 0:
                 Eval = newboardscore
             else:
                 newboardmatrix = matrixmove(board, board_matrix, move)
-                tempboard.push(move)
-                Eval = minimax(tempboard, depth - 1, alpha, beta, True, newboardscore, newboardmatrix)
+                board.push(move)
+                Eval = minimax(board, depth - 1, alpha, beta, True, newboardscore, newboardmatrix)
+                board.pop()
             minEval = min(minEval, Eval)
             beta = min(beta, Eval)
             if beta <= alpha:
