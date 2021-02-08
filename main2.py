@@ -3,6 +3,7 @@ import sys
 import engine2 as E
 import chess
 from pygame.locals import *
+import chess.engine
 
 pygame.init()
 
@@ -102,6 +103,8 @@ def draw_checker_board(markers=[], indicators=[], dialog=""):
 
 board = E.ChessAi(lookahead=3)
 
+engine = chess.engine.SimpleEngine.popen_uci("vice.exe")
+
 markers = []
 selected = ()
 making_move = False
@@ -115,7 +118,7 @@ debug_play = False
 
 def AIPlay():
     indicators = []
-    move = board.makemove(board.board.turn, flipped)
+    move = engine.play(board.board, chess.engine.Limit(time=0.1)).move
     board.board.push(move)
     if not flipped:
         indicators.append((int(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].index(
