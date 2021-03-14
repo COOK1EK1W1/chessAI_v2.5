@@ -12,7 +12,7 @@ scale = 65
 
 DISPLAYSURF = pygame.display.set_mode((scale * 8, scale * 9), 0, 32)
 
-pygame.display.set_caption('Albert the chess ai')
+pygame.display.set_caption('The waiting game')
 font = pygame.font.Font('FreeSerif.ttf', 76)
 
 #Colours
